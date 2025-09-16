@@ -44,6 +44,6 @@ MIT License.
 ## Contact 📬
 - LinkedIn: [Muzamal Asghar](https://www.linkedin.com/in/muzamalasgharofficial/)
 - GitHub: [muzamal478](https://github.com/muzamal478)
-- Email: [your.email@example.com]
+- Email: [muzamalasghar47@gmail.com](mailto:muzamalasghar47@gmail.com)
 
-Built with 💜 for HEX SOFTWARES Internship
+Built with 💙 for HEX SOFTWARES Internship
