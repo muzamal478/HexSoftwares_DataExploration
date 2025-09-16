@@ -1,0 +1,122 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Python Data Exploration Script for Iris - HEX SOFTWARES Internship">
+    <title>Python Script - Data Exploration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">Iris Data Exploration</div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html#home" aria-label="Home Section">Home</a></li>
+                <li><a href="index.html#exploration" aria-label="Exploration Section">Exploration</a></li>
+                <li><a href="#python" aria-label="Python Script">Python Script</a></li>
+                <li><a href="index.html#contact" aria-label="Contact Section">Contact</a></li>
+            </ul>
+            <div class="menu-toggle" id="mobile-menu">
+                <span the="bar"></span>
+                <span the="bar"></span>
+                <span the="bar"></span>
+            </div>
+        </nav>
+    </header>
+
+    <section id="python" class="section">
+        <div class="section-overlay"></div>
+        <div class="section-content">
+            <h2>Python Data Exploration Script 🐍</h2>
+            <p>Below is the Python script used to load, explore, and visualize the Iris dataset. It uses Pandas, Seaborn, and Matplotlib to check missing values and generate PNGs.</p>
+            <pre><code>
+# Import libraries
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+
+# Load dataset
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df['species'] = iris.target_names[iris.target]
+
+# Explore structure
+print("Dataset Shape:", df.shape)
+print("Columns:", df.columns)
+
+# Check missing values
+print("Missing Values:\n", df.isnull().sum())
+
+# Handle missing (none in Iris, but code for completeness)
+df.fillna(method='ffill', inplace=True)
+
+# Visualize distributions
+plt.figure(figsize=(12, 8))
+for i, feature in enumerate(iris.feature_names):
+    plt.subplot(2, 2, i+1)
+    sns.histplot(data=df, x=feature, hue='species', kde=True)
+    plt.title(f'Distribution of {feature}')
+plt.tight_layout()
+plt.savefig('images/distributions.png')
+plt.close()
+
+# Pairplot
+sns.pairplot(df, hue='species')
+plt.savefig('images/pairplot.png')
+plt.close()
+
+print("Data exploration completed. Visualizations saved as PNGs.")
+            </code></pre>
+            <a href="iris_exploration.py" download class="cta-button">Download Python Script</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Muzamal Asghar. All rights reserved. | Built with 💙</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
